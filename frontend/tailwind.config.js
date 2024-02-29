@@ -8,7 +8,12 @@ export default {
     extend: {
       fontFamily: {
         'sans': ['Inter', 'sans-serif']
+      },
+      backgroundImage: {
+        'image-personal': "url('./src/assets/bg.svg')",
+        'image-personal-big': "url('./src/assets/bg-large.svg')",
       }
+
     },
   },
   plugins: [],
