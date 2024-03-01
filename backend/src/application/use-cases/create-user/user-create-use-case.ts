@@ -9,7 +9,7 @@ interface IUserRequest {
 }
 
 @Injectable()
-export class CreateUseCase {
+export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
   async execute({ email, fullname, password }: IUserRequest) {

@@ -1,12 +1,12 @@
 import { UserInMemoryRepository } from "@test/in-memory-repository/user-in-memory"
-import { CreateUseCase } from "./user-create-use-case"
+import { CreateUserUseCase } from "./user-create-use-case"
 
 describe('User Create', () =>{
   it('should be able to create a user', async () => {
     const userRepository = new UserInMemoryRepository()
-    const userCreateUseCase = new CreateUseCase(userRepository)
+    const createUserUseCase = new CreateUserUseCase(userRepository)
 
-    await userCreateUseCase.execute({
+    await createUserUseCase.execute({
       email: 'user@example.com',
       fullname: 'Teste',
       password: 'dev123'
