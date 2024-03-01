@@ -1,16 +1,18 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Loader2 } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { z } from 'zod'
-
 import { isObjectEmpty } from '../../../utils'
 import LogoImg from '../../../assets/name-logo.svg'
 import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { api } from '../../../services/api'
+import { AxiosError } from 'axios'
 
 const loginUserSchema = z.object({
-  fullName: z.string(),
+  fullname: z.string(),
   email: z.string().email({ message: 'Informe um email válido!' }),
   password: z.string(),
 })
@@ -18,13 +20,26 @@ type ILoginUser = z.infer<typeof loginUserSchema>
 
 export const Register = () => {
   const navigate = useNavigate()
-
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors }
   } = useForm<ILoginUser>({ resolver: zodResolver(loginUserSchema) })
+
+  const { mutateAsync: createUserMutationAsync, isPending } = useMutation({
+    mutationFn: async (data: ILoginUser) => {
+      await api.post('/user', data)
+    },
+    onSuccess: () => {
+      reset()
+      navigate('/success-register')
+    },
+    onError: (error: AxiosError) => {
+      const err = error.response?.data as Error
+      toast.error(err.message[0])
+    },
+  })
 
   useEffect(() => {
     if (isObjectEmpty(errors)) return
@@ -33,8 +48,7 @@ export const Register = () => {
   }, [errors])
 
   const handleSendRegister = async (data: ILoginUser) => {
-
-    console.log(data)
+    await createUserMutationAsync(data)
   }
 
   return (
@@ -60,7 +74,7 @@ export const Register = () => {
             <div>
               <div className="relative">
                 <input
-                  {...register('fullName', { required: true })}
+                  {...register('fullname', { required: true })}
                   type="text"
                   required
                   id="floating_filled_fullname"
@@ -107,8 +121,10 @@ export const Register = () => {
               </div>
             </div>
 
-            <button className='bg-green-500 w-full mt-8 py-4 rounded-lg text-white hover:opacity-80 transition-colors'>
-              Concluir cadastro
+            <button
+              disabled={isPending}
+              className='flex items-center justify-center bg-green-500 w-full mt-8 py-4 rounded-lg text-white hover:opacity-80 transition-colors'>
+              {isPending ? <Loader2 className='animate-spin' /> : 'Concluir cadastro'}
             </button>
           </form>
         </div>
