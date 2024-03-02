@@ -1,5 +1,5 @@
 import { UserRepository } from "@application/repositories/user-repository";
-import { Prisma, User } from "@prisma/client";
+import { $Enums, Prisma, User } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 
 export class UserInMemoryRepository implements UserRepository {
@@ -21,5 +21,23 @@ export class UserInMemoryRepository implements UserRepository {
     }
 
     this.users.push(user)
+  }
+
+  async findById(userId: string) {
+    const user = this.users.find(user => user.id === userId)
+
+    if (!user)
+      return null
+
+    return user
+  }
+
+  async findByEmail(email: string) {
+    const user = this.users.find(user => user.email === email)
+
+    if (!user)
+      return null
+
+    return user
   }
 }

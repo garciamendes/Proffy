@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Check, Heart } from 'lucide-react'
+import { Check, Heart, Loader2 } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -8,6 +8,10 @@ import { z } from 'zod'
 import { isObjectEmpty } from '../../../utils'
 import LogoImg from '../../../assets/name-logo.svg'
 import { useNavigate } from 'react-router-dom'
+import { AxiosError, AxiosResponse } from 'axios'
+import { useMutation } from '@tanstack/react-query'
+import { api } from '../../../services/api'
+import { useCookies } from 'react-cookie'
 
 const loginUserSchema = z.object({
   email: z.string().email({ message: 'Informe um email válido!' }),
@@ -17,6 +21,7 @@ const loginUserSchema = z.object({
 type ILoginUser = z.infer<typeof loginUserSchema>
 
 export const Login = () => {
+  const [, setCookie] = useCookies()
   const navigate = useNavigate()
 
   const {
@@ -26,6 +31,24 @@ export const Login = () => {
     formState: { errors }
   } = useForm<ILoginUser>({ resolver: zodResolver(loginUserSchema) })
 
+  const { mutateAsync: loginMutationAsync, isPending } = useMutation({
+    mutationFn: async (data: ILoginUser): Promise<any> => {
+      const response = await api.post('/user/login', data)
+
+      return response
+    },
+    onSuccess: (response) => {
+      setCookie('sessionId', response.data, {
+        path: '/',
+        sameSite: true,
+      })
+      navigate('/home')
+    },
+    onError: (error: AxiosError) => {
+      toast.error('Email ou senha então incorretas')
+    },
+  })
+
   useEffect(() => {
     if (isObjectEmpty(errors)) return
 
@@ -34,7 +57,7 @@ export const Login = () => {
 
   const handleSendLogin = async (data: ILoginUser) => {
 
-    console.log(data)
+    await loginMutationAsync(data)
   }
 
   return (
@@ -104,10 +127,18 @@ export const Login = () => {
                 <label htmlFor='remember-check' className='text-base text-gray-500'>Lembrar-me</label>
               </div>
 
-              <span className='cursor-pointer hover:underline text-base text-gray-500'>Esqueci minha senha</span>
+              <span
+                onClick={() => navigate('/forgot-password')}
+                className='cursor-pointer hover:underline text-base text-gray-500'>
+                  Esqueci minha senha
+                </span>
             </div>
 
-            <button className='bg-slate-300 w-full mt-8 py-4 rounded-lg text-gray-500 hover:opacity-80 transition-colors'>Entrar</button>
+            <button
+              disabled={isPending}
+              className='flex items-center justify-center bg-slate-300 w-full mt-8 py-4 rounded-lg text-gray-500 hover:opacity-80 transition-colors'>
+                {isPending ? <Loader2 className='animate-spin' /> : 'Entrar'}
+              </button>
           </form>
         </div>
 
