@@ -24,10 +24,11 @@ model User {
   valueByhours Decimal?
   matter       CHOICES_MATTERS?
 
-  DayWeek DayWeek[]
+  DayWeek             DayWeek[]
+  tokenForgotPassword tokenForgotPassword?
 
-  created  DateTime @default(now())
   modified DateTime @updatedAt
+  created  DateTime @default(now())
 }
 
 model DayWeek {
@@ -43,6 +44,17 @@ model DayWeek {
 
   created  DateTime @default(now())
   modified DateTime @updatedAt
+}
+
+model tokenForgotPassword {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  blacklist String[]
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  created DateTime @default(now())
 }
 
 enum CHOICE_DAY_WEEK {

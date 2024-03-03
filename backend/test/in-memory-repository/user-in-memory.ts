@@ -1,5 +1,5 @@
 import { UserRepository } from "@application/repositories/user-repository";
-import { $Enums, Prisma, User } from "@prisma/client";
+import { $Enums, Prisma, User, tokenForgotPassword } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 
 export class UserInMemoryRepository implements UserRepository {
@@ -39,5 +39,28 @@ export class UserInMemoryRepository implements UserRepository {
       return null
 
     return user
+  }
+
+  async createSessionReset(user: User): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; }> {
+    throw new Error("Method not implemented.");
+  }
+
+  async killSessionReset(sessionToken: { id: string; token: string; blacklist: string[]; userId: string; created: Date; }): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  async findSessionReset(id: string): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; } | null> {
+    throw new Error("Method not implemented.");
+  }
+
+  async findSessionResetByUser(user_id: string): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; } | null> {
+    throw new Error("Method not implemented.");
+  }
+  async saveSessionTokenReset(data: Partial<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; }>): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; } | null> {
+    throw new Error("Method not implemented.");
+  }
+
+  async saveNewPasswordUser(data: Partial<{ id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; modified: Date; created: Date; }>): Promise<any> {
+    throw new Error("Method not implemented.");
   }
 }

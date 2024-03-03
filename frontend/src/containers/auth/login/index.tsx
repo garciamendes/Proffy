@@ -12,6 +12,7 @@ import { AxiosError, AxiosResponse } from 'axios'
 import { useMutation } from '@tanstack/react-query'
 import { api } from '../../../services/api'
 import { useCookies } from 'react-cookie'
+import { withAuth } from '../../../hooks/withAuth'
 
 const loginUserSchema = z.object({
   email: z.string().email({ message: 'Informe um email válido!' }),
@@ -20,7 +21,7 @@ const loginUserSchema = z.object({
 })
 type ILoginUser = z.infer<typeof loginUserSchema>
 
-export const Login = () => {
+const Login = () => {
   const [, setCookie] = useCookies()
   const navigate = useNavigate()
 
@@ -159,3 +160,5 @@ export const Login = () => {
     </div>
   )
 }
+
+export default withAuth(Login, false)
