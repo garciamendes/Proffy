@@ -10,4 +10,5 @@ export abstract class UserRepository {
   abstract findSessionResetByUser(user_id: string): Promise<tokenForgotPassword | null>
   abstract saveSessionTokenReset(data: Partial<tokenForgotPassword>): Promise<tokenForgotPassword>
   abstract saveNewPasswordUser(data: Partial<User>): Promise<void>
+  abstract getAllConnections(): Promise<number>
 }

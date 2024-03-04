@@ -1,53 +1,40 @@
-import { useNavigate } from "react-router-dom"
 import { withAuth } from "../../hooks/withAuth"
-import { useCookies } from "react-cookie"
 import ThumbHomeImg from '../../assets/thumb-home.svg'
 import LogoImg from '../../assets/name-logo.svg'
 import NoImageImg from '../../assets/no-image.svg'
-import { BookOpen, Heart, MonitorDot, Power } from "lucide-react"
+import { BookOpen, Heart, Loader2, MonitorDot, Power } from "lucide-react"
 import { useLogin } from "../../hooks/useLogin"
-
-export interface ICurrentUser {
-  id: string
-  fullname: string
-  email: string
-  whatsapp: string | null
-  bio: string | null
-  avatar: string | null
-  password: string
-  valueByhours: number
-  matter: string
-  modified: Date
-  created: Date
-}
+import { useCurrentUserQuery, useGetAllConnectionsQuery } from "../../store/modules/user/api"
+import { useEffect } from "react"
+import { toast } from "sonner"
 
 const Home = () => {
-  const [, setCookie] = useCookies()
-  const navigate = useNavigate()
   const { logout } = useLogin()
 
-  // const { data: currentUser, error, isLoading } = useQuery<ICurrentUser>({
-  //   queryKey: ['current_user'],
-  //   queryFn: async () => {
-  //     const response = await api.get('user/current-user', {
-  //       headers: {
-  //         'Authorization': 'Bearer ' + getAuthToken()
-  //       }
-  //     })
+  const { data: currentUser, isError: isErrorCurrentUser, isLoading: isLoadindCurrentUser } =
+    useCurrentUserQuery()
+  const { data: getAllConnections, isError: isErrorGetAllConnections, isLoading: isLoadingGetAllConnections } =
+    useGetAllConnectionsQuery()
 
-  //     return response.data
-  //   }
-  // })
+  useEffect(() => {
+    if (isLoadindCurrentUser)
+      return
 
-  // useEffect(() => {
-  //   if (isLoading)
-  //     return
+    if (isErrorCurrentUser) {
+      toast.error('Erro ao tentar buscar suas informações')
+      return
+    }
+  }, [isErrorCurrentUser, isLoadindCurrentUser])
 
-  //   if (error) {
-  //     toast.error('Erro ao tentar buscar suas informações')
-  //     return
-  //   }
-  // }, [error, isLoading])
+  useEffect(() => {
+    if (isLoadingGetAllConnections)
+      return
+
+    if (isErrorGetAllConnections) {
+      toast.error('Erro ao tentar buscar total de conexões')
+      return
+    }
+  }, [isErrorGetAllConnections, isLoadingGetAllConnections])
 
   return (
     <div className="h-screen w-screen flex flex-col">
@@ -55,8 +42,14 @@ const Home = () => {
         <div className="flex flex-col justify-between w-[80%]">
           <header className="flex justify-between w-full mt-4">
             <div className="flex gap-4 items-center cursor-pointer">
-              <img className="inline-block size-10 rounded-full" src={NoImageImg} alt="" />
-              <span className="text-white text-base">{'---'}</span>
+              {isLoadindCurrentUser ? (
+                <Loader2 className="animate-spin text-white" />
+              ) : (
+                <>
+                  <img className="inline-block size-10 rounded-full" src={currentUser?.avatar || NoImageImg} alt="" />
+                  <span className="text-white text-base">{currentUser?.fullname || '---'}</span>
+                </>
+              )}
             </div>
 
             <div onClick={logout} className="flex items-center justify-center size-10 rounded-xl bg-violet-700 hover:bg-violet-800 cursor-pointer">
@@ -86,8 +79,14 @@ const Home = () => {
               </div>
 
               <div className="flex flex-col gap-0.5">
-                <span>Total de 300 conexões</span>
-                <span className="flex gap-3 items-center justify-end">já realizadas <Heart className='size-5 fill-violet-300 stroke-violet-300' /></span>
+                {isLoadingGetAllConnections ? (
+                  <Loader2 className="animate-spin text-white" />
+                ) : (
+                  <>
+                    <span>{`Total de ${getAllConnections?.count ?? 0} conexões`}</span>
+                    <span className="flex gap-3 items-center justify-end">já realizadas <Heart className='size-5 fill-violet-300 stroke-violet-300' /></span>
+                  </>
+                )}
               </div>
             </div>
           </div>

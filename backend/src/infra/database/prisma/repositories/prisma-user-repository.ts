@@ -97,4 +97,10 @@ export class PrismaUserRepository implements UserRepository {
       }
     })
   }
+
+  async getAllConnections(): Promise<number> {
+    const count = await this.prisma.user.count()
+
+    return count
+  }
 }

@@ -56,11 +56,17 @@ export class UserInMemoryRepository implements UserRepository {
   async findSessionResetByUser(user_id: string): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; } | null> {
     throw new Error("Method not implemented.");
   }
-  async saveSessionTokenReset(data: Partial<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; }>): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; } | null> {
-    throw new Error("Method not implemented.");
-  }
 
   async saveNewPasswordUser(data: Partial<{ id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; modified: Date; created: Date; }>): Promise<any> {
     throw new Error("Method not implemented.");
   }
+
+  async saveSessionTokenReset(data: Partial<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; }>): Promise<{ id: string; token: string; blacklist: string[]; userId: string; created: Date; }> {
+    throw new Error("Method not implemented.");
+  }
+
+  async getAllConnections(): Promise<number> {
+    throw new Error("Method not implemented.");
+  }
+
 }

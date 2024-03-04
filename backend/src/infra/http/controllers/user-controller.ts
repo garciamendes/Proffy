@@ -10,6 +10,7 @@ import { ValidateSessionTokenUseCase } from "@application/use-cases/validate-ses
 import { ResetPasswordUseCase } from "@application/use-cases/save-new-password/save-new-password-use-case";
 import { AuthGuard } from "src/guards/auth.guard";
 import { GetUserUseCase } from "@application/use-cases/get-user/get-user-use-case";
+import { GetAllConnectionsUseCase } from "@application/use-cases/get-all-connections/get-all-connections-use-case";
 
 @Controller('user')
 export class UserController {
@@ -20,7 +21,8 @@ export class UserController {
     private killSessionTokenForgotoPasswordUseCase: KillSessionTokenForgotPasswordUseCase,
     private validateSessionTokenUseCase: ValidateSessionTokenUseCase,
     private resetPasswordUseCase: ResetPasswordUseCase,
-    private getUserUseCase: GetUserUseCase
+    private getUserUseCase: GetUserUseCase,
+    private getAllConnections: GetAllConnectionsUseCase
   ) { }
 
   @Post()
@@ -30,7 +32,7 @@ export class UserController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  async login(@Body() body: { email: string, password: string}) {
+  async login(@Body() body: { email: string, password: string }) {
     const { email, password } = body
 
     const { access_token } = await this.authenticateUserUseCase.execute({ email, password })
@@ -65,5 +67,12 @@ export class UserController {
     const { t, u, newPassword } = body
 
     await this.resetPasswordUseCase.execute({ token: t, uid: u, newPassword })
+  }
+
+  @Get('get-all-connections')
+  async getAllConnectionsEndPoint() {
+    const count = await this.getAllConnections.execute()
+
+    return { count }
   }
 }
