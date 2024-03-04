@@ -8,47 +8,29 @@ import { z } from 'zod'
 import { isObjectEmpty } from '../../../utils'
 import LogoImg from '../../../assets/name-logo.svg'
 import { useNavigate } from 'react-router-dom'
-import { AxiosError, AxiosResponse } from 'axios'
-import { useMutation } from '@tanstack/react-query'
-import { api } from '../../../services/api'
-import { useCookies } from 'react-cookie'
 import { withAuth } from '../../../hooks/withAuth'
+import { useLogin } from '../../../hooks/useLogin'
 
-const loginUserSchema = z.object({
+export const loginUserSchema = z.object({
   email: z.string().email({ message: 'Informe um email válido!' }),
   password: z.string(),
   remember: z.boolean().default(false)
 })
-type ILoginUser = z.infer<typeof loginUserSchema>
+export type ILoginUser = z.infer<typeof loginUserSchema>
+
+export interface ILoginResponse {
+  access_token: string
+}
 
 const Login = () => {
-  const [, setCookie] = useCookies()
   const navigate = useNavigate()
+  const { login, isError, isLoading, isSuccess } = useLogin()
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors }
   } = useForm<ILoginUser>({ resolver: zodResolver(loginUserSchema) })
-
-  const { mutateAsync: loginMutationAsync, isPending } = useMutation({
-    mutationFn: async (data: ILoginUser): Promise<any> => {
-      const response = await api.post('/user/login', data)
-
-      return response
-    },
-    onSuccess: (response) => {
-      setCookie('sessionId', response.data, {
-        path: '/',
-        sameSite: true,
-      })
-      navigate('/home')
-    },
-    onError: (error: AxiosError) => {
-      toast.error('Email ou senha então incorretas')
-    },
-  })
 
   useEffect(() => {
     if (isObjectEmpty(errors)) return
@@ -56,9 +38,16 @@ const Login = () => {
     Object.values(errors).forEach((error) => toast.error(error.message))
   }, [errors])
 
-  const handleSendLogin = async (data: ILoginUser) => {
+  useEffect(() => {
+    if (isError || !isSuccess) return
 
-    await loginMutationAsync(data)
+    if (isLoading) return
+
+    navigate('/home')
+  }, [isLoading, isSuccess, isError])
+
+  const handleSendLogin = async (data: ILoginUser) => {
+    login(data.email, data.password, data.remember)
   }
 
   return (
@@ -136,9 +125,9 @@ const Login = () => {
             </div>
 
             <button
-              disabled={isPending}
+              disabled={isLoading}
               className='flex items-center justify-center bg-slate-300 w-full mt-8 py-4 rounded-lg text-gray-500 hover:opacity-80 transition-colors'>
-                {isPending ? <Loader2 className='animate-spin' /> : 'Entrar'}
+                {isLoading ? <Loader2 className='animate-spin' /> : 'Entrar'}
               </button>
           </form>
         </div>

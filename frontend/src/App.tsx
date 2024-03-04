@@ -1,16 +1,16 @@
 import { RouterProvider } from 'react-router-dom'
 import { routes } from './routers'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { CookiesProvider } from 'react-cookie'
+import { Provider } from 'react-redux'
+import { store } from './store/store'
 
-const queryClient = new QueryClient()
 export const App = () => {
 
   return (
     <CookiesProvider>
-      <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
         <RouterProvider router={routes} fallbackElement={'Carregando...'} />
-      </QueryClientProvider>
+      </Provider>
     </CookiesProvider>
   )
 }

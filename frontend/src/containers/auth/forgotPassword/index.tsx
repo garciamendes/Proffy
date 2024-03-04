@@ -7,9 +7,7 @@ import { z } from 'zod'
 import { isObjectEmpty } from '../../../utils'
 import LogoImg from '../../../assets/name-logo.svg'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
-import { api } from '../../../services/api'
-import { AxiosError } from 'axios'
+import { useSendEmailResetPasswordMutation } from '../../../store/modules/auth/api'
 
 const loginUserSchema = z.object({
   email: z.string().email({ message: 'Informe um email válido!' }),
@@ -25,19 +23,7 @@ export const ForgotPassword = () => {
     formState: { errors }
   } = useForm<IForgotPasswordUser>({ resolver: zodResolver(loginUserSchema) })
 
-  const { mutateAsync: sendEmailToSetPassword, isPending } = useMutation({
-    mutationFn: async (data: IForgotPasswordUser) => {
-      await api.post('/user/forgot-password', data)
-    },
-    onSuccess: () => {
-      reset()
-      navigate('/success-forgot-password')
-    },
-    onError: (error: AxiosError) => {
-      const err = error.response?.data as Error
-      toast.error(err.message[0])
-    },
-  })
+  const [sendEmailResetPassword, { isLoading }] = useSendEmailResetPasswordMutation()
 
   useEffect(() => {
     if (isObjectEmpty(errors)) return
@@ -45,8 +31,14 @@ export const ForgotPassword = () => {
     Object.values(errors).forEach((error) => toast.error(error.message))
   }, [errors])
 
-  const handleSendRegister = async (data: IForgotPasswordUser) => {
-    await sendEmailToSetPassword(data)
+  const handleSendRegister = (data: IForgotPasswordUser) => {
+    sendEmailResetPassword({ email: data.email })
+      .unwrap()
+      .then(() => {
+        navigate('/success-forgot-password')
+        reset()
+      })
+      .catch(() => toast.error('Erro ao tentar enviar o email para resetar a senha'))
   }
 
   return (
@@ -89,9 +81,9 @@ export const ForgotPassword = () => {
             </div>
 
             <button
-              disabled={isPending}
+              disabled={isLoading}
               className='flex items-center justify-center bg-gray-300 w-full mt-8 py-4 rounded-lg text-white hover:opacity-90 transition-colors'>
-              {isPending ? <Loader2 className='animate-spin' /> : 'Enviar'}
+              {isLoading ? <Loader2 className='animate-spin' /> : 'Enviar'}
             </button>
           </form>
         </div>

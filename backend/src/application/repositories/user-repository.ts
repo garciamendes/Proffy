@@ -8,6 +8,6 @@ export abstract class UserRepository {
   abstract killSessionReset(sessionToken: tokenForgotPassword): Promise<void>
   abstract findSessionReset(id: string): Promise<tokenForgotPassword | null>
   abstract findSessionResetByUser(user_id: string): Promise<tokenForgotPassword | null>
-  abstract saveSessionTokenReset(data: Partial<tokenForgotPassword>): Promise<tokenForgotPassword | null>
+  abstract saveSessionTokenReset(data: Partial<tokenForgotPassword>): Promise<tokenForgotPassword>
   abstract saveNewPasswordUser(data: Partial<User>): Promise<void>
 }

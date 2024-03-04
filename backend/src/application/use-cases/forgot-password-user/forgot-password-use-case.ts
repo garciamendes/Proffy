@@ -1,5 +1,5 @@
 import { UserRepository } from "@application/repositories/user-repository";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { hash } from "bcrypt";
 
 interface IUserRequest {
@@ -14,17 +14,16 @@ export class ForgotPasswordUserUseCase {
     const userExist = await this.userRepository.findByEmail(email)
 
     if (!userExist)
-      throw new Error('User not found!')
+      throw new NotFoundException('User not found')
 
     const hasSessionResetPass = await this.userRepository.findSessionResetByUser(userExist.id)
 
-    let tokenResponse = ''
-    let idResponse = ''
 
     if (!hasSessionResetPass) {
       const { token, id } = await this.userRepository.createSessionReset(userExist)
-      tokenResponse = token
-      idResponse = id
+
+      console.log(`${process.env.SET_PASSWORD_LINK_FRONTEND}?u=${id}&t=${token}`)
+      return { message: 'Sended link to email' }
     }
 
     const data = {
@@ -33,11 +32,9 @@ export class ForgotPasswordUserUseCase {
       created: new Date()
     }
 
-    const sessionToken = await this.userRepository.saveSessionTokenReset(data)
-    tokenResponse = sessionToken?.token as string
-    idResponse = sessionToken?.id as string
+    const { id, token } = await this.userRepository.saveSessionTokenReset(data)
 
-    console.log(`${process.env.SET_PASSWORD_LINK_FRONTEND}?u=${idResponse}&t=${tokenResponse}`)
+    console.log(`${process.env.SET_PASSWORD_LINK_FRONTEND}?u=${id}&t=${token}`)
     return { message: 'Sended link to email' }
   }
 }

@@ -1,15 +1,15 @@
 import { CreateUserUseCase } from "@application/use-cases/create-user/user-create-use-case";
-import { Body, Controller, Get, HttpStatus, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { CreateUserDTO } from "../dtos/create-user-dto";
 import { AuthenticateUserUseCase } from "@application/use-cases/authenticate-user/authenticate-use-case";
 import { Request } from "express";
-import { LocalGuard } from "src/guards/local.guard";
-import { LoggedInGuard } from "src/guards/logger-in-guard";
 import { ForgotoPasswordDTO, ValidateSessionResetDTO, resetPasswordSessionResetDTO } from "../dtos/forgot-password";
 import { ForgotPasswordUserUseCase } from "@application/use-cases/forgot-password-user/forgot-password-use-case";
 import { KillSessionTokenForgotPasswordUseCase } from "@application/use-cases/kill-session-token-forgot-password/kill-session-token-forgot-password-use-case";
 import { ValidateSessionTokenUseCase } from "@application/use-cases/validate-session-token/validate-session-token-use-case";
 import { ResetPasswordUseCase } from "@application/use-cases/save-new-password/save-new-password-use-case";
+import { AuthGuard } from "src/guards/auth.guard";
+import { GetUserUseCase } from "@application/use-cases/get-user/get-user-use-case";
 
 @Controller('user')
 export class UserController {
@@ -19,7 +19,8 @@ export class UserController {
     private forgotPasswordUseCase: ForgotPasswordUserUseCase,
     private killSessionTokenForgotoPasswordUseCase: KillSessionTokenForgotPasswordUseCase,
     private validateSessionTokenUseCase: ValidateSessionTokenUseCase,
-    private resetPasswordUseCase: ResetPasswordUseCase
+    private resetPasswordUseCase: ResetPasswordUseCase,
+    private getUserUseCase: GetUserUseCase
   ) { }
 
   @Post()
@@ -27,21 +28,21 @@ export class UserController {
     await this.createUserUseCase.execute(body)
   }
 
-  @Get('logout')
-  async logout(@Req() request: Request) {
-    request.session.destroy(() => { return { status: HttpStatus.OK } })
-  }
-
   @Post('login')
-  @UseGuards(LocalGuard)
-  async login(@Req() request: Request) {
-    return request.sessionID
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() body: { email: string, password: string}) {
+    const { email, password } = body
+
+    const { access_token } = await this.authenticateUserUseCase.execute({ email, password })
+    return { access_token }
   }
 
   @Get('current-user')
-  @UseGuards(LoggedInGuard)
-  async currentUser(@Req() request: Request) {
-    return request.session['passport'] as unknown
+  @UseGuards(AuthGuard)
+  async currentUser(@Req() request: any) {
+    const sub = request.user?.sub
+    const user = await this.getUserUseCase.execute({ user_id: sub })
+    return user
   }
 
   @Post('forgot-password')

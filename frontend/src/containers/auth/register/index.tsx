@@ -7,9 +7,7 @@ import { z } from 'zod'
 import { isObjectEmpty } from '../../../utils'
 import LogoImg from '../../../assets/name-logo.svg'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
-import { api } from '../../../services/api'
-import { AxiosError } from 'axios'
+import { useRegisterMutation } from '../../../store/modules/auth/api'
 
 const loginUserSchema = z.object({
   fullname: z.string(),
@@ -23,23 +21,10 @@ export const Register = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors }
   } = useForm<ILoginUser>({ resolver: zodResolver(loginUserSchema) })
 
-  const { mutateAsync: createUserMutationAsync, isPending } = useMutation({
-    mutationFn: async (data: ILoginUser) => {
-      await api.post('/user', data)
-    },
-    onSuccess: () => {
-      reset()
-      navigate('/success-register')
-    },
-    onError: (error: AxiosError) => {
-      const err = error.response?.data as Error
-      toast.error(err.message[0])
-    },
-  })
+  const [createUserMutationAsync, { isLoading }] = useRegisterMutation()
 
   useEffect(() => {
     if (isObjectEmpty(errors)) return
@@ -48,7 +33,12 @@ export const Register = () => {
   }, [errors])
 
   const handleSendRegister = async (data: ILoginUser) => {
-    await createUserMutationAsync(data)
+    const { fullname, email, password } = data
+
+    createUserMutationAsync({ fullname, email, password })
+      .unwrap()
+      .then(() => navigate('/success-register'))
+      .catch(() => toast.error('Erro ao tentar criar o usuário'))
   }
 
   return (
@@ -122,9 +112,9 @@ export const Register = () => {
             </div>
 
             <button
-              disabled={isPending}
+              disabled={isLoading}
               className='flex items-center justify-center bg-green-500 w-full mt-8 py-4 rounded-lg text-white hover:opacity-80 transition-colors'>
-              {isPending ? <Loader2 className='animate-spin' /> : 'Concluir cadastro'}
+              {isLoading ? <Loader2 className='animate-spin' /> : 'Concluir cadastro'}
             </button>
           </form>
         </div>

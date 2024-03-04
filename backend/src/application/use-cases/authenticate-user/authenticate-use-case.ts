@@ -1,5 +1,6 @@
 import { UserRepository } from "@application/repositories/user-repository";
 import { Injectable, Req } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { compare } from 'bcrypt'
 
 interface IUserRequest {
@@ -9,9 +10,12 @@ interface IUserRequest {
 
 @Injectable()
 export class AuthenticateUserUseCase {
-  constructor(private userRepository: UserRepository) { }
+  constructor(
+    private userRepository: UserRepository,
+    private jwtService: JwtService
+  ) { }
 
-  async validateUser({ email, password }: IUserRequest) {
+  async execute({ email, password }: IUserRequest) {
     const userExist = await this.userRepository.findByEmail(email)
 
     if (!userExist)
@@ -21,7 +25,9 @@ export class AuthenticateUserUseCase {
     if (!isPasswordMatch)
       throw new Error('Email or password incorrect')
 
-    const { password: pass, ...userData } = userExist
-    return userData
+    const payload = { sub: userExist.id }
+    const access_token = await this.jwtService.signAsync(payload)
+
+    return { access_token }
   }
 }
