@@ -24,7 +24,7 @@ model User {
   valueByhours Decimal?
   matter       CHOICES_MATTERS?
 
-  DayWeek             DayWeek[]
+  dayWeek             DayWeek[]
   tokenForgotPassword tokenForgotPassword?
 
   modified DateTime @updatedAt

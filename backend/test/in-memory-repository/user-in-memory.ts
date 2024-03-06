@@ -1,4 +1,5 @@
 import { UserRepository } from "@application/repositories/user-repository";
+import { IUpdateProfileRequest } from "@application/use-cases/save-profile/save-profile-use-case";
 import { $Enums, Prisma, User, tokenForgotPassword } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 
@@ -69,4 +70,7 @@ export class UserInMemoryRepository implements UserRepository {
     throw new Error("Method not implemented.");
   }
 
+  async saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<{ id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; modified: Date; created: Date; }> {
+    throw new Error("Method not implemented.");
+  }
 }

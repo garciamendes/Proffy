@@ -7,8 +7,10 @@ import { useLogin } from "../../hooks/useLogin"
 import { useCurrentUserQuery, useGetAllConnectionsQuery } from "../../store/modules/user/api"
 import { useEffect } from "react"
 import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
+  const navigate = useNavigate()
   const { logout } = useLogin()
 
   const { data: currentUser, isError: isErrorCurrentUser, isLoading: isLoadindCurrentUser } =
@@ -41,7 +43,9 @@ const Home = () => {
       <div className="flex justify-center h-[60%] bg-violet-600">
         <div className="flex flex-col justify-between w-[80%]">
           <header className="flex justify-between w-full mt-4">
-            <div className="flex gap-4 items-center cursor-pointer">
+            <div
+              onClick={() => navigate('/profile')}
+              className={`flex gap-4 items-center cursor-pointer ${isLoadindCurrentUser && 'pointer-events-none'}`}>
               {isLoadindCurrentUser ? (
                 <Loader2 className="animate-spin text-white" />
               ) : (

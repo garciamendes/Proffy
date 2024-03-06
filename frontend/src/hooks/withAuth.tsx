@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
 import { AUTH_TOKEN_KEY } from '../store/constants'
+import { Loader } from '../components/loader/índex'
 
 export const withAuth = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
@@ -30,10 +30,7 @@ export const withAuth = <P extends object>(
       setLoading(false)
     }, [])
 
-    return loading ?
-      <div className='flex item-center justify-center mt-10'>
-        <Loader2 className="animate-spin text-violet-700 size-16" />
-      </div> :
+    return loading ? <Loader /> :
       <WrappedComponent {...props} />
   }
 

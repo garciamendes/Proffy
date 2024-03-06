@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import {
   IGetAllConnectionsResponse,
+  ISaveProfileRequest,
   IUserResponse,
 } from './types'
 import { baseQuery } from '../../query'
@@ -23,11 +24,20 @@ export const userApi = createApi({
         method: 'GET',
       }),
       providesTags: ['get-all-connections']
+    }),
+    saveProfile: builder.mutation<void, ISaveProfileRequest>({
+      query: (data) => ({
+        url: '/user/profile',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['current-user']
     })
   }),
 })
 
 export const {
   useCurrentUserQuery,
-  useGetAllConnectionsQuery
+  useGetAllConnectionsQuery,
+  useSaveProfileMutation
 } = userApi

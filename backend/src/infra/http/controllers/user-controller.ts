@@ -1,8 +1,17 @@
 import { CreateUserUseCase } from "@application/use-cases/create-user/user-create-use-case";
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
 import { CreateUserDTO } from "../dtos/create-user-dto";
 import { AuthenticateUserUseCase } from "@application/use-cases/authenticate-user/authenticate-use-case";
-import { Request } from "express";
 import { ForgotoPasswordDTO, ValidateSessionResetDTO, resetPasswordSessionResetDTO } from "../dtos/forgot-password";
 import { ForgotPasswordUserUseCase } from "@application/use-cases/forgot-password-user/forgot-password-use-case";
 import { KillSessionTokenForgotPasswordUseCase } from "@application/use-cases/kill-session-token-forgot-password/kill-session-token-forgot-password-use-case";
@@ -11,6 +20,7 @@ import { ResetPasswordUseCase } from "@application/use-cases/save-new-password/s
 import { AuthGuard } from "src/guards/auth.guard";
 import { GetUserUseCase } from "@application/use-cases/get-user/get-user-use-case";
 import { GetAllConnectionsUseCase } from "@application/use-cases/get-all-connections/get-all-connections-use-case";
+import { IUpdateProfileRequest, SaveProfileUseCase } from "@application/use-cases/save-profile/save-profile-use-case";
 
 @Controller('user')
 export class UserController {
@@ -22,7 +32,8 @@ export class UserController {
     private validateSessionTokenUseCase: ValidateSessionTokenUseCase,
     private resetPasswordUseCase: ResetPasswordUseCase,
     private getUserUseCase: GetUserUseCase,
-    private getAllConnections: GetAllConnectionsUseCase
+    private getAllConnections: GetAllConnectionsUseCase,
+    private saveProfileUseCase: SaveProfileUseCase,
   ) { }
 
   @Post()
@@ -70,9 +81,16 @@ export class UserController {
   }
 
   @Get('get-all-connections')
+  @UseGuards(AuthGuard)
   async getAllConnectionsEndPoint() {
     const count = await this.getAllConnections.execute()
 
     return { count }
+  }
+
+  @Patch('profile')
+  @UseGuards(AuthGuard)
+  async saveProfile(@Body() body: IUpdateProfileRequest) {
+    await this.saveProfileUseCase.execute(body.id, body)
   }
 }

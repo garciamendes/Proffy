@@ -11,6 +11,7 @@ import { ResetPasswordUseCase } from "@application/use-cases/save-new-password/s
 import { JwtModule } from "@nestjs/jwt";
 import { GetUserUseCase } from "@application/use-cases/get-user/get-user-use-case";
 import { GetAllConnectionsUseCase } from "@application/use-cases/get-all-connections/get-all-connections-use-case";
+import { SaveProfileUseCase } from "@application/use-cases/save-profile/save-profile-use-case";
 
 @Module({
   imports: [
@@ -33,7 +34,9 @@ import { GetAllConnectionsUseCase } from "@application/use-cases/get-all-connect
     ValidateSessionTokenUseCase,
     ResetPasswordUseCase,
     GetUserUseCase,
-    GetAllConnectionsUseCase
+    GetAllConnectionsUseCase,
+    SaveProfileUseCase,
+    // SaveProfileAvatarUseCase
   ]
 })
 export class HttpModule { }

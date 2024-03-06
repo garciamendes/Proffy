@@ -7,6 +7,7 @@ import Home from '../containers/home'
 import { ForgotPassword } from '../containers/auth/forgotPassword'
 import { SucessForgotPassword } from '../containers/auth/successForgotPassword'
 import { ResetPassword } from '../containers/auth/resetPassword'
+import Profile from '../containers/profile'
 
 export const routes = createBrowserRouter([
   {
@@ -37,4 +38,8 @@ export const routes = createBrowserRouter([
     path: '/reset-password',
     element: <ResetPassword />
   },
+  {
+    path: '/profile',
+    element: <Profile />
+  }
 ])

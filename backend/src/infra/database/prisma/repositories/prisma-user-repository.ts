@@ -3,7 +3,7 @@ import { Prisma, User, tokenForgotPassword } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
 import { Injectable } from "@nestjs/common";
 import { hash } from "bcrypt";
-import { randomUUID } from "node:crypto";
+import { IUpdateProfileRequest } from "@application/use-cases/save-profile/save-profile-use-case";
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -14,7 +14,22 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async findById(userId: string) {
-    const user = this.prisma.user.findUnique({ where: { id: userId } })
+    const user = this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        dayWeek: {
+          select: {
+            id: true,
+            dayWeek: true,
+            to: true,
+            from: true
+          },
+          orderBy: {
+            created: "asc"
+          }
+        }
+      }
+    })
 
     if (!user)
       return null
@@ -102,5 +117,56 @@ export class PrismaUserRepository implements UserRepository {
     const count = await this.prisma.user.count()
 
     return count
+  }
+
+  async saveProfile(user_id: string, data: IUpdateProfileRequest) {
+    const { dayWeek, bio, email, fullname, matter, valueByhours, whatsapp } = data
+
+    const { creates, deletes, updates } = dayWeek
+    const user = await this.prisma.$transaction(async (p) => {
+      for (const item of creates) {
+        await p.dayWeek.create({
+          data: {
+            dayWeek: item.dayWeek,
+            from: item.from,
+            to: item.to,
+            userId: user_id
+          }
+        })
+      }
+
+      for (const item of updates) {
+        await p.dayWeek.update({
+          where: { id: item.id },
+          data: {
+            dayWeek: item.dayWeek,
+            from: item.from,
+            to: item.to,
+          }
+        })
+      }
+
+      for (const item of deletes) {
+        await p.dayWeek.delete({
+          where: { id: item }
+        })
+      }
+
+      const user = await this.prisma.user.update({
+        where: { id: user_id },
+        data: {
+          bio,
+          email,
+          fullname,
+          matter,
+          valueByhours: new Prisma.Decimal(valueByhours),
+          whatsapp
+        },
+      })
+
+      return user
+    })
+
+    return user
   }
 }

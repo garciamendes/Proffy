@@ -1,3 +1,4 @@
+import { IUpdateProfileRequest } from '@application/use-cases/save-profile/save-profile-use-case';
 import { Prisma, User, tokenForgotPassword } from '@prisma/client'
 
 export abstract class UserRepository {
@@ -11,4 +12,5 @@ export abstract class UserRepository {
   abstract saveSessionTokenReset(data: Partial<tokenForgotPassword>): Promise<tokenForgotPassword>
   abstract saveNewPasswordUser(data: Partial<User>): Promise<void>
   abstract getAllConnections(): Promise<number>
+  abstract saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<User>
 }
