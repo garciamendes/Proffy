@@ -2,6 +2,7 @@ import { useCookies } from 'react-cookie'
 import { useEffect } from 'react'
 import { AUTH_TOKEN_KEY } from '../store/constants'
 import { useLoginMutation } from '../store/modules/auth/api'
+import { toast } from 'sonner'
 
 export function useLogin() {
   const [, setCookie] = useCookies([AUTH_TOKEN_KEY])
@@ -21,6 +22,8 @@ export function useLogin() {
 
   const login = (email: string, password: string, remember: boolean) => {
     loginAction({ email, password, remember })
+      .unwrap()
+      .catch(() => toast.error('Email ou Senha incorretas'))
   }
 
 

@@ -3,7 +3,8 @@ import { Header } from "../../components/header"
 import { withAuth } from "../../hooks/withAuth"
 import { useCurrentUserQuery, useSaveProfileMutation } from "../../store/modules/user/api"
 import NoImageImg from '../../assets/no-image.svg'
-import { AlertOctagon, Camera, Loader2, Plus } from "lucide-react"
+import RocketImg from '../../assets/rocket.svg'
+import { AlertOctagon, Loader2, Plus } from "lucide-react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { formProfileSchema, profileSchema } from "./types"
@@ -15,9 +16,8 @@ import { Loader } from "../../components/loader/índex"
 import moment from 'moment'
 import { toast } from "sonner"
 import { CHOICES_MATTERS_ENUM, CHOICE_DAY_WEEK_ENUM } from "../../utils/types"
-import { useGetAvatarQuery } from "../../store/modules/avatar/api"
 
-const Profile = () => {
+const Tearch = () => {
   const { data: currentUser, isLoading, refetch } =
     useCurrentUserQuery()
   const [handleSaveProfile, { isLoading: isLoadingSaveProfile }] = useSaveProfileMutation()
@@ -230,23 +230,19 @@ const Profile = () => {
 
   return (
     <div className="flex flex-col h-full w-full pb-3">
-      <Header title="Meu perfil" goBackRoute="/home" />
+      <Header title="Dar aula" goBackRoute="/home" />
 
       <div className="relative h-96 w-full flex justify-center items-center bg-violet-700">
-        <div className="absolute z-0 bg-image-personal-big bg-center bg-no-repeat h-[90%] w-full"></div>
+        <div className="flex flex-col justify-center gap-6 z-10 w-[45%] h-full">
+          <strong className="text-3xl text-white w-80">Que incrível que você quer dar aulas.</strong>
 
-        <div className="felx flex-col justify-center items-center gap-3 z-10">
-          <div className="relative mb-3 w-max m-auto">
-            <img id="teste" className="inline-block size-44 rounded-full" src={NoImageImg} />
+          <div className="flex items-center justify-between">
+            <span className="text-1xl text-slate-400 w-80">O primeiro passo, é preencher esse formulário de inscrição.</span>
 
-            <div className="cursor-pointer size-12 rounded-full flex items-center justify-center absolute bottom-0 right-2 bg-green-400 hover:bg-green-500 duration-300">
-              <Camera className="text-[16px] text-white" />
+            <div className="flex items-center justify-between gap-6">
+              <img src={RocketImg} className="size-10" />
+              <span className="text-[14px] text-slate-400 w-32">Preparare-se! vai ser o máximo.</span>
             </div>
-          </div>
-
-          <div className="flex flex-col justify-center items-center gap-2">
-            <strong className="text-[24px] text-white">{currentUser?.fullname || '---'}</strong>
-            <span className="text-[16px] text-gray-400">{CHOICES_MATTERS[currentUser?.matter as string]?.text || '---'}</span>
           </div>
         </div>
       </div>
@@ -258,25 +254,10 @@ const Profile = () => {
               <strong className="text-[24px] text-gray-600">Seus dados</strong>
             </div>
 
-            <div className="flex justify-between mt-4">
-              <div className="flex flex-col w-full">
-                <label htmlFor="name" className="mb-1">Nome completo</label>
-                <input
-                  {...register('fullname')}
-                  type="text"
-                  id='name'
-                  className='py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md' />
-              </div>
-            </div>
-
             <div className="flex justify-between mt-4 gap-4">
-              <div className="flex flex-col flex-1">
-                <label htmlFor="email" className="mb-1">Email</label>
-                <input
-                  {...register('email')}
-                  type="text"
-                  id='email'
-                  className='py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md' />
+              <div className="flex items-center gap-5 flex-1">
+                <img id="teste" className="inline-block size-14 border rounded-full" src={NoImageImg} />
+                <strong className="text-[24px] text-violet-950">{currentUser?.fullname || '---'}</strong>
               </div>
 
               <div className="flex flex-col w-[30%]">
@@ -329,7 +310,7 @@ const Profile = () => {
               </div>
 
               <div className="flex flex-col w-[30%]">
-                <label htmlFor="valueByHours" className="mb-1">Preço</label>
+                <label htmlFor="valueByHours" className="mb-1">Nome completo</label>
                 <div className="flex items-center gap-3 py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md">
                   <strong className="text-gray-400">R$</strong>
 
@@ -393,4 +374,4 @@ const Profile = () => {
   )
 }
 
-export default withAuth(Profile)
+export default withAuth(Tearch)

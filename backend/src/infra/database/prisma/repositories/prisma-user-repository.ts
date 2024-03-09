@@ -169,4 +169,13 @@ export class PrismaUserRepository implements UserRepository {
 
     return user
   }
+
+  async uploadAvatar(user_id: string, filename: string) {
+    await this.prisma.user.update({
+      where: { id: user_id },
+      data: {
+        avatar: filename
+      }
+    })
+  }
 }

@@ -50,7 +50,7 @@ const Home = () => {
                 <Loader2 className="animate-spin text-white" />
               ) : (
                 <>
-                  <img className="inline-block size-10 rounded-full" src={currentUser?.avatar || NoImageImg} alt="" />
+                  <img className="inline-block size-10 rounded-full" src={NoImageImg} alt="" />
                   <span className="text-white text-base">{currentUser?.fullname || '---'}</span>
                 </>
               )}
@@ -96,12 +96,16 @@ const Home = () => {
           </div>
 
           <div className="w-1/2 px-12 flex items-center justify-around">
-            <button className="py-5 rounded-xl border-none flex justify-center items-center gap-3 bg-violet-700 w-[30%] hover:opacity-90">
+            <button
+              onClick={() => navigate('/list-tearches')}
+              className="py-5 rounded-xl border-none flex justify-center items-center gap-3 bg-violet-700 w-[30%] hover:opacity-90">
               <BookOpen className="size-9 text-white" />
               <strong className='text-white'>Estudar</strong>
             </button>
 
-            <button className="py-5 rounded-xl border-none flex justify-center items-center gap-3 bg-green-500 w-[30%] hover:opacity-90">
+            <button
+              onClick={() => navigate('/tearch')}
+              className="py-5 rounded-xl border-none flex justify-center items-center gap-3 bg-green-500 w-[30%] hover:opacity-90">
               <MonitorDot className="size-9 text-white" />
               <strong className='text-white'>Dar aulas</strong>
             </button>

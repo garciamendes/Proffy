@@ -9,7 +9,7 @@ import { AUTH_TOKEN_KEY } from './constants'
 import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios'
 
 export const BASE_URL =
-  import.meta.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+  import.meta.env.API_URL || 'http://localhost:3333'
 
 export const getAuthToken = () => {
   const cookies = cookie.parse(document.cookie)

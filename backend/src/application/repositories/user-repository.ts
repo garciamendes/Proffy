@@ -13,4 +13,5 @@ export abstract class UserRepository {
   abstract saveNewPasswordUser(data: Partial<User>): Promise<void>
   abstract getAllConnections(): Promise<number>
   abstract saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<User>
+  abstract uploadAvatar(user_id: string, filename: string): Promise<void>
 }

@@ -73,4 +73,8 @@ export class UserInMemoryRepository implements UserRepository {
   async saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<{ id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; modified: Date; created: Date; }> {
     throw new Error("Method not implemented.");
   }
+
+  async uploadAvatar(user_id: string, filename: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
 }

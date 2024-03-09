@@ -8,6 +8,8 @@ import { ForgotPassword } from '../containers/auth/forgotPassword'
 import { SucessForgotPassword } from '../containers/auth/successForgotPassword'
 import { ResetPassword } from '../containers/auth/resetPassword'
 import Profile from '../containers/profile'
+import Tearch from '../containers/tearch'
+import ListTearches from '../containers/listTearches'
 
 export const routes = createBrowserRouter([
   {
@@ -41,5 +43,13 @@ export const routes = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile />
+  },
+  {
+    path: '/tearch',
+    element: <Tearch />
+  },
+  {
+    path: '/list-tearches',
+    element: <ListTearches />
   }
 ])

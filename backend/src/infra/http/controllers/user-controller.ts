@@ -5,10 +5,16 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseFilePipeBuilder,
   Patch,
   Post,
   Req,
+  Res,
+  StreamableFile,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { CreateUserDTO } from "../dtos/create-user-dto";
 import { AuthenticateUserUseCase } from "@application/use-cases/authenticate-user/authenticate-use-case";
@@ -21,6 +27,12 @@ import { AuthGuard } from "src/guards/auth.guard";
 import { GetUserUseCase } from "@application/use-cases/get-user/get-user-use-case";
 import { GetAllConnectionsUseCase } from "@application/use-cases/get-all-connections/get-all-connections-use-case";
 import { IUpdateProfileRequest, SaveProfileUseCase } from "@application/use-cases/save-profile/save-profile-use-case";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { extname, join } from "path";
+import { UploadAvatarUseCase } from "@application/use-cases/upload-avatar/upload-avatar-use-case";
+import { Response } from "express";
+import { createReadStream } from "fs";
 
 @Controller('user')
 export class UserController {
@@ -34,6 +46,7 @@ export class UserController {
     private getUserUseCase: GetUserUseCase,
     private getAllConnections: GetAllConnectionsUseCase,
     private saveProfileUseCase: SaveProfileUseCase,
+    private uploadAvatarUseCase: UploadAvatarUseCase
   ) { }
 
   @Post()
@@ -92,5 +105,41 @@ export class UserController {
   @UseGuards(AuthGuard)
   async saveProfile(@Body() body: IUpdateProfileRequest) {
     await this.saveProfileUseCase.execute(body.id, body)
+  }
+
+  @Patch('upload-avatar')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './uploads',
+      filename(req: any, file, callback) {
+        const user_id = req.user.sub
+        return callback(null, `${user_id}-avatar${extname(file.originalname)}`);
+      },
+    })
+  }))
+  async uploadAvatar(@UploadedFile(
+    new ParseFilePipeBuilder()
+      .addFileTypeValidator({
+        fileType: 'jpeg',
+      })
+      .build({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+      }),
+  ) file: Express.Multer.File, @Req() request: any) {
+    const user_id = request.user.sub
+    await this.uploadAvatarUseCase.execute(user_id, file.filename)
+  }
+
+  @Get('current-user/avatar')
+  @UseGuards(AuthGuard)
+  async getAvatar(@Res() res: Response, @Req() req: any) {
+    const sub = req.user?.sub
+    const user = await this.getUserUseCase.execute({ user_id: sub })
+
+    if (!user.avatar)
+      return { avatar: '' }
+
+    return res.sendFile(user.avatar, { root: './uploads' })
   }
 }

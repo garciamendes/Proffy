@@ -9,7 +9,7 @@ import { baseQuery } from '../../query'
 export const userApi = createApi({
   reducerPath: 'user',
   baseQuery: baseQuery,
-  tagTypes: ['current-user', 'get-all-connections'],
+  tagTypes: ['current-user', 'get-all-connections', 'current-user-avatar'],
   endpoints: (builder) => ({
     currentUser: builder.query<IUserResponse, void>({
       query: () => ({
@@ -17,6 +17,13 @@ export const userApi = createApi({
         method: 'GET',
       }),
       providesTags: ['current-user']
+    }),
+    getAvatar: builder.query<any, void>({
+      query: () => ({
+        url: '/user/current-user/avatar',
+        method: 'GET',
+      }),
+      providesTags: ['current-user-avatar']
     }),
     getAllConnections: builder.query<IGetAllConnectionsResponse, void>({
       query: () => ({
@@ -39,5 +46,5 @@ export const userApi = createApi({
 export const {
   useCurrentUserQuery,
   useGetAllConnectionsQuery,
-  useSaveProfileMutation
+  useSaveProfileMutation,
 } = userApi

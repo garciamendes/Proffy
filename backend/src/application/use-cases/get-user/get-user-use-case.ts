@@ -14,7 +14,7 @@ export class GetUserUseCase {
     const user = await this.userRepository.findById(user_id)
 
     if (!user)
-      return new NotFoundException()
+      throw new NotFoundException()
 
     const { password, ...rest } = user
     return rest

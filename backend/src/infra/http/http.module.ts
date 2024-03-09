@@ -11,6 +11,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { GetUserUseCase } from "@application/use-cases/get-user/get-user-use-case";
 import { GetAllConnectionsUseCase } from "@application/use-cases/get-all-connections/get-all-connections-use-case";
 import { SaveProfileUseCase } from "@application/use-cases/save-profile/save-profile-use-case";
+import { UploadAvatarUseCase } from "@application/use-cases/upload-avatar/upload-avatar-use-case";
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { SaveProfileUseCase } from "@application/use-cases/save-profile/save-pro
     GetUserUseCase,
     GetAllConnectionsUseCase,
     SaveProfileUseCase,
-    // SaveProfileAvatarUseCase
+    UploadAvatarUseCase
   ]
 })
 export class HttpModule { }
