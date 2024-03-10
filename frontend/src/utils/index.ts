@@ -1,3 +1,7 @@
+import { ParsedQuery } from 'query-string'
+import React from 'react'
+import { useLocation } from 'react-router-dom'
+
 export const isObjectEmpty = (data: object) => {
   if (!data)
     return false
@@ -15,4 +19,16 @@ export const formatMaskPhone = (value: string) => {
   value = value.replace(/(\d)(\d{4})$/, "$1-$2")
 
   return value
+}
+
+export const getQueryParams = (params: URLSearchParams, filters: string[]) => {
+  const queryParams: Record<string, string | null | undefined> = {}
+
+  filters.forEach((filter) => {
+    if (params.get(filter)) {
+      queryParams[filter] = params.get(filter)
+    }
+  })
+
+  return queryParams
 }

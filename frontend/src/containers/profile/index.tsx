@@ -305,69 +305,73 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex flex-col my-7">
-            <div className="border-b border-gray-400 pb-2">
-              <strong className="text-[24px] text-gray-600">Sobre a aula</strong>
-            </div>
-
-            <div className="flex justify-between mt-4 gap-4">
-              <div className="flex flex-col flex-1">
-                <label htmlFor="matter" className="mb-1">Matéria</label>
-
-                <select
-                  id='matter'
-                  className="cursor-pointer py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md"
-                  {...register('matter')}>
-                  <option value="">Selecione uma matéria</option>
-
-                  {MATTERS_OPTIONS.map(option => {
-                    return <option
-                      key={option.value}
-                      value={option.value}>{option.label}</option>
-                  })}
-                </select>
+          {currentUser?.isEducator && (
+            <div className="flex flex-col my-7">
+              <div className="border-b border-gray-400 pb-2">
+                <strong className="text-[24px] text-gray-600">Sobre a aula</strong>
               </div>
 
-              <div className="flex flex-col w-[30%]">
-                <label htmlFor="valueByHours" className="mb-1">Preço</label>
-                <div className="flex items-center gap-3 py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md">
-                  <strong className="text-gray-400">R$</strong>
+              <div className="flex justify-between mt-4 gap-4">
+                <div className="flex flex-col flex-1">
+                  <label htmlFor="matter" className="mb-1">Matéria</label>
 
-                  <Controller
-                    name='valueByhours'
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <NumericFormat
-                        decimalScale={2}
-                        decimalSeparator=","
-                        fixedDecimalScale
-                        placeholder="0,00"
-                        thousandSeparator="."
-                        value={value}
-                        className="flex-1 outline-none bg-transparent"
-                        onChange={onChange} />
-                    )}
-                  />
+                  <select
+                    id='matter'
+                    className="cursor-pointer py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md"
+                    {...register('matter')}>
+                    <option value="">Selecione uma matéria</option>
+
+                    {MATTERS_OPTIONS.map(option => {
+                      return <option
+                        key={option.value}
+                        value={option.value}>{option.label}</option>
+                    })}
+                  </select>
+                </div>
+
+                <div className="flex flex-col w-[30%]">
+                  <label htmlFor="valueByHours" className="mb-1">Preço</label>
+                  <div className="flex items-center gap-3 py-2 px-2 text-[15px] bg-gray-50 border border-gray-300 outline-none rounded-md">
+                    <strong className="text-gray-400">R$</strong>
+
+                    <Controller
+                      name='valueByhours'
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <NumericFormat
+                          decimalScale={2}
+                          decimalSeparator=","
+                          fixedDecimalScale
+                          placeholder="0,00"
+                          thousandSeparator="."
+                          value={value}
+                          className="flex-1 outline-none bg-transparent"
+                          onChange={onChange} />
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          <div className="flex flex-col mb-7">
-            <div className="flex justify-between border-b border-gray-400 pb-2">
-              <strong className="text-[24px] text-gray-600">Horários disponíveis</strong>
+          {currentUser?.isEducator && (
+            <div className="flex flex-col mb-7">
+              <div className="flex justify-between border-b border-gray-400 pb-2">
+                <strong className="text-[24px] text-gray-600">Horários disponíveis</strong>
 
-              <button
-                type="button"
-                onClick={() => append({ dayWeek: '', from: new Date(0), to: new Date(0), isNew: true })}
-                className="bg-none border-none flex items-center gap-2 text-violet-700 hover:text-violet-800">
-                <Plus />
-                <strong>Novo horário</strong>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => append({ dayWeek: '', from: new Date(0), to: new Date(0), isNew: true })}
+                  className="bg-none border-none flex items-center gap-2 text-violet-700 hover:text-violet-800">
+                  <Plus />
+                  <strong>Novo horário</strong>
+                </button>
+              </div>
+
+              {renderInfoHours()}
             </div>
-
-            {renderInfoHours()}
-          </div>
+          )}
 
           <div className="w-full border-t flex justify-between py-4">
             <div className="flex items-start gap-3">

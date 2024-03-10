@@ -25,6 +25,7 @@ export interface IUpdateProfileRequest {
   matter: CHOICES_MATTERS
   valueByhours: string
   whatsapp: string
+  isEducator: boolean
 }
 
 @Injectable()

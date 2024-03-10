@@ -5,22 +5,25 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   ParseFilePipeBuilder,
   Patch,
   Post,
   Req,
-  Res,
-  StreamableFile,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { CreateUserDTO } from "../dtos/create-user-dto";
 import { AuthenticateUserUseCase } from "@application/use-cases/authenticate-user/authenticate-use-case";
-import { ForgotoPasswordDTO, ValidateSessionResetDTO, resetPasswordSessionResetDTO } from "../dtos/forgot-password";
+import {
+  ForgotoPasswordDTO,
+  ValidateSessionResetDTO,
+  resetPasswordSessionResetDTO
+} from "../dtos/forgot-password";
 import { ForgotPasswordUserUseCase } from "@application/use-cases/forgot-password-user/forgot-password-use-case";
-import { KillSessionTokenForgotPasswordUseCase } from "@application/use-cases/kill-session-token-forgot-password/kill-session-token-forgot-password-use-case";
+import {
+  KillSessionTokenForgotPasswordUseCase
+} from "@application/use-cases/kill-session-token-forgot-password/kill-session-token-forgot-password-use-case";
 import { ValidateSessionTokenUseCase } from "@application/use-cases/validate-session-token/validate-session-token-use-case";
 import { ResetPasswordUseCase } from "@application/use-cases/save-new-password/save-new-password-use-case";
 import { AuthGuard } from "src/guards/auth.guard";
@@ -31,8 +34,10 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname, join } from "path";
 import { UploadAvatarUseCase } from "@application/use-cases/upload-avatar/upload-avatar-use-case";
-import { Response } from "express";
-import { createReadStream } from "fs";
+import { Response, Request } from "express";
+import { GetAllEducatorsUseCase } from "@application/use-cases/get-all-educators/get-all-edicators-use-case";
+import { ListEducatorsUseCase } from "@application/use-cases/list-educators/list-educators-use-case";
+import { IFIltersListEducators } from "@application/repositories/user-repository";
 
 @Controller('user')
 export class UserController {
@@ -46,7 +51,9 @@ export class UserController {
     private getUserUseCase: GetUserUseCase,
     private getAllConnections: GetAllConnectionsUseCase,
     private saveProfileUseCase: SaveProfileUseCase,
-    private uploadAvatarUseCase: UploadAvatarUseCase
+    private uploadAvatarUseCase: UploadAvatarUseCase,
+    private getAllEducators: GetAllEducatorsUseCase,
+    private listEducatorsUseCase: ListEducatorsUseCase
   ) { }
 
   @Post()
@@ -131,15 +138,32 @@ export class UserController {
     await this.uploadAvatarUseCase.execute(user_id, file.filename)
   }
 
-  @Get('current-user/avatar')
+  // @Get('current-user/avatar')
+  // @UseGuards(AuthGuard)
+  // async getAvatar(@Res() res: Response, @Req() req: any) {
+  //   const sub = req.user?.sub
+  //   const user = await this.getUserUseCase.execute({ user_id: sub })
+
+  //   if (!user.avatar)
+  //     return { avatar: '' }
+
+  //   return res.sendFile(user.avatar, { root: './uploads' })
+  // }
+
+  @Get('all-educators')
   @UseGuards(AuthGuard)
-  async getAvatar(@Res() res: Response, @Req() req: any) {
-    const sub = req.user?.sub
-    const user = await this.getUserUseCase.execute({ user_id: sub })
+  async getAlleducators() {
+    const count = await this.getAllEducators.execute()
 
-    if (!user.avatar)
-      return { avatar: '' }
+    return { count }
+  }
 
-    return res.sendFile(user.avatar, { root: './uploads' })
+  @Get('list-educators')
+  @UseGuards(AuthGuard)
+  async listEducators(@Req() request: Request) {
+    const filters = request.query
+    const listEducators = await this.listEducatorsUseCase.execute(filters as unknown as IFIltersListEducators)
+
+    return { listEducators }
   }
 }

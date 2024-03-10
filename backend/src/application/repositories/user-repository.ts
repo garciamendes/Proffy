@@ -1,6 +1,12 @@
 import { IUpdateProfileRequest } from '@application/use-cases/save-profile/save-profile-use-case';
 import { Prisma, User, tokenForgotPassword } from '@prisma/client'
 
+export interface IFIltersListEducators {
+  matter: string
+  dayWeek: string
+  valueByhours: number
+}
+
 export abstract class UserRepository {
   abstract create(data: Prisma.UserCreateInput): Promise<void>
   abstract findById(userId: string): Promise<User | null>
@@ -14,4 +20,6 @@ export abstract class UserRepository {
   abstract getAllConnections(): Promise<number>
   abstract saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<User>
   abstract uploadAvatar(user_id: string, filename: string): Promise<void>
+  abstract getAllEducators(): Promise<number>
+  abstract listEducators(filters?: IFIltersListEducators): Promise<User[]>
 }

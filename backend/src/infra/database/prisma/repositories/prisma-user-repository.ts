@@ -1,5 +1,5 @@
-import { UserRepository } from "@application/repositories/user-repository";
-import { Prisma, User, tokenForgotPassword } from "@prisma/client";
+import { IFIltersListEducators, UserRepository } from "@application/repositories/user-repository";
+import { CHOICES_MATTERS, CHOICE_DAY_WEEK, Prisma, User, tokenForgotPassword } from "@prisma/client";
 import { PrismaService } from "../prisma.service";
 import { Injectable } from "@nestjs/common";
 import { hash } from "bcrypt";
@@ -120,7 +120,7 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async saveProfile(user_id: string, data: IUpdateProfileRequest) {
-    const { dayWeek, bio, email, fullname, matter, valueByhours, whatsapp } = data
+    const { dayWeek, bio, email, fullname, matter, valueByhours, whatsapp, isEducator } = data
 
     const { creates, deletes, updates } = dayWeek
     const user = await this.prisma.$transaction(async (p) => {
@@ -159,6 +159,7 @@ export class PrismaUserRepository implements UserRepository {
           email,
           fullname,
           matter,
+          isEducator,
           valueByhours: new Prisma.Decimal(valueByhours),
           whatsapp
         },
@@ -177,5 +178,44 @@ export class PrismaUserRepository implements UserRepository {
         avatar: filename
       }
     })
+  }
+
+  async getAllEducators() {
+    const count = await this.prisma.user.count({ where: { isEducator: true } })
+
+    return count
+  }
+
+  async listEducators(filters: IFIltersListEducators) {
+    const listEducators = await this.prisma.user.findMany({
+      where: {
+        isEducator: true,
+        matter: {
+          equals: filters.matter as CHOICES_MATTERS
+        },
+        dayWeek: {
+          some: {
+            dayWeek: {
+              equals: filters.dayWeek as CHOICE_DAY_WEEK
+            }
+          }
+        },
+        valueByhours: {
+          equals: filters.valueByhours
+        }
+      },
+      include: {
+        dayWeek: {
+          select: {
+            id: true,
+            from: true,
+            to: true,
+            dayWeek: true
+          }
+        }
+      },
+    })
+
+    return listEducators
   }
 }

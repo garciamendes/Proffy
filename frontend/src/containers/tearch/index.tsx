@@ -124,7 +124,8 @@ const Tearch = () => {
       fullname: data.fullname,
       matter: data.matter as CHOICES_MATTERS_ENUM,
       valueByhours: valeuByhour,
-      whatsapp: data.whatsapp
+      whatsapp: data.whatsapp,
+      isEducator: true
     }
 
     handleSaveProfile(dataToSave)

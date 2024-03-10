@@ -19,11 +19,14 @@ export interface IUserResponse {
   modified: Date
   created: Date
   dayWeek: IDayWeek[]
+  isEducator: boolean
 }
 
 export interface IGetAllConnectionsResponse {
   count: number
 }
+
+export type IGetAllEducatorsResponse = IGetAllConnectionsResponse
 
 export interface IDayWeekSaveProfile {
   id: string
@@ -48,4 +51,20 @@ export interface ISaveProfileRequest {
   matter: CHOICES_MATTERS_ENUM
   valueByhours: string
   whatsapp: string
+  isEducator?: boolean
+}
+
+export interface IFiltersListEducators {
+  matter?: string
+  dayWeek?: string
+  valueByhours?: string
+}
+
+
+export interface IListEducatorsRequest {
+  filters?: IFiltersListEducators
+}
+
+export interface IListEducatorsResponse {
+  listEducators: IUserResponse[]
 }

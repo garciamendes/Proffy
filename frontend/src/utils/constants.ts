@@ -68,28 +68,33 @@ const sufix = '-feira'
 export const CHOICE_DAY_WEEK: choiceDayWeek = {
   [SECOND]: {
     key: SECOND,
-    text: 'Segunda'.concat(sufix)
+    text: 'Segunda',
+    textWithSufix: 'Segunda'.concat(sufix)
   },
   [THIRD]: {
     key: THIRD,
-    text: 'Terça'.concat(sufix)
+    text: 'Terça',
+    textWithSufix: 'Terça'.concat(sufix)
   },
   [FOURTH]: {
     key: FOURTH,
-    text: 'Quarta'.concat(sufix)
+    text: 'Quarta',
+    textWithSufix: 'Quarta'.concat(sufix)
   },
   [FIFTH]: {
     key: FIFTH,
-    text: 'Quinta'.concat(sufix)
+    text: 'Quinta',
+    textWithSufix: 'Quinta'.concat(sufix)
   },
   [FRIDAY]: {
     key: FRIDAY,
-    text: 'Sexta'.concat(sufix)
+    text: 'Sexta',
+    textWithSufix: 'Sexta'.concat(sufix)
   },
 }
 
 export const DAY_WEEK_OPTIONS: IOption[] = Object.values(CHOICE_DAY_WEEK).map(row => {
-  return { value: row.key, label: row.text }
+  return { value: row.key, label: row.textWithSufix }
 })
 
 export const FORMAT_REF = 'YYYY-MM-DDTHH:mm:ss.SSSSZ'

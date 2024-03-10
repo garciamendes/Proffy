@@ -23,6 +23,7 @@ model User {
   password     String
   valueByhours Decimal?
   matter       CHOICES_MATTERS?
+  isEducator   Boolean          @default(false)
 
   dayWeek             DayWeek[]
   tokenForgotPassword tokenForgotPassword?

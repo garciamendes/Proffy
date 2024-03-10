@@ -23,4 +23,4 @@ export type CHOICE_DAY_WEEK_ENUM =
   | 'FRIDAY'
 
 export type choiceMatter = Record<string, { key: string, text: string }>
-export type choiceDayWeek = Record<string, { key: string, text: string }>
+export type choiceDayWeek = Record<string, { key: string, text: string, textWithSufix: string }>

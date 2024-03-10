@@ -1,7 +1,6 @@
 import { UserRepository } from "@application/repositories/user-repository";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { hash } from 'bcrypt'
-
+import { exclude } from "@utils/excludeFields";
 interface IUserRequest {
   user_id: string
 }
@@ -16,7 +15,7 @@ export class GetUserUseCase {
     if (!user)
       throw new NotFoundException()
 
-    const { password, ...rest } = user
+    const rest = exclude(user, ['password'])
     return rest
   }
 }

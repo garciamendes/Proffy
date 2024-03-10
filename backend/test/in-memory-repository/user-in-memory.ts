@@ -18,7 +18,8 @@ export class UserInMemoryRepository implements UserRepository {
       valueByhours: data.valueByhours ? new Prisma.Decimal(data.valueByhours as number) : null,
       whatsapp: data.whatsapp || null,
       created: new Date(),
-      modified: new Date()
+      modified: new Date(),
+      isEducator: data.isEducator || false
     }
 
     this.users.push(user)
@@ -70,11 +71,19 @@ export class UserInMemoryRepository implements UserRepository {
     throw new Error("Method not implemented.");
   }
 
-  async saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<{ id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; modified: Date; created: Date; }> {
+  async saveProfile(user_id: string, data: IUpdateProfileRequest): Promise<{ isEducator: boolean, id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; modified: Date; created: Date; }> {
     throw new Error("Method not implemented.");
   }
 
   async uploadAvatar(user_id: string, filename: string): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  async getAllEducators(): Promise<number> {
+    throw new Error("Method not implemented.");
+  }
+
+  async listEducators(): Promise<{ id: string; fullname: string; email: string; whatsapp: string | null; bio: string | null; avatar: string | null; password: string; valueByhours: Prisma.Decimal | null; matter: $Enums.CHOICES_MATTERS | null; isEducator: boolean; modified: Date; created: Date; }[]> {
     throw new Error("Method not implemented.");
   }
 }
